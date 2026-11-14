@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd backend || exit 1
+
+npm run test:unit

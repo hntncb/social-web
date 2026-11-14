@@ -1,0 +1,57 @@
+
+name: Run Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+      - name: Run Integration Tests
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+          JWT_SECRET: test_jwt_secret_for_ci_only
+          JWT_EXPIRES_IN: 1h
+        run: docker compose --profile test run --rm api-test npm run test:integration:internal
+
+      - name: Debug Docker
+        if: failure()
+        run: |
+          docker ps -a
+
+          echo "===== postgres-node-test ====="
+          docker logs postgres-node-test || true
+
+          echo "===== node-api-test ====="
+          docker logs node-api-test || true
+
+      - name: Cleanup Docker
+        if: always()
+        run: docker compose --profile test down -v
