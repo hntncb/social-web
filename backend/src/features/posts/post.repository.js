@@ -81,34 +81,19 @@ export const createPostWithUrl = async (title, content, author_id, url) => {
 };
 
 export const updatePostById = async (client, id, data) => {
-    const ALLOWED_COLUMNS = new Set(['title', 'content']);
-    
-    const entries = Object.entries(data).filter(([key]) => ALLOWED_COLUMNS.has(key));
-
-    if (entries.length === 0) {
-        return null;
-    }
-
-    const setClauses = [];
-    const values = [];
-
-    entries.forEach(([key, value], index) => {
-        setClauses.push(`${key} = $${index + 1}`);
-        values.push(value);
-    });
-
-    values.push(Number(id));
-    const idPlaceholderIndex = values.length;
-
+    const { title, content } = data;
     const sql = `UPDATE posts
-        SET ${setClauses.join(', ')},
-        updated_at = NOW()
+        SET 
+            title = COALESCE($2, title), 
+            content = COALESCE($3, content),
+        updated_at = NOW(),
+        edited_at = NOW()
         WHERE deleted_at IS NULL 
-        AND id = $${idPlaceholderIndex}
+        AND id = $1
         RETURNING *
         `;
 
-    const result = await client.query(sql, values);
+    const result = await client.query(sql, [id, title, content]);
     return result.rows[0] ?? null;
 };
 
@@ -132,7 +117,7 @@ export const upsertPostLink = async (client, id, data) => {
         INSERT INTO post_links (${sqlString}, post_id)
         VALUES ($1, $2)
         ON CONFLICT (post_id)
-        DO UPDATE SET url = EXCLUDED.url
+        DO UPDATE SET url = EXCLUDED.url, updated_at = NOW()
         RETURNING *
     `;
     const result = await client.query(sql, values);

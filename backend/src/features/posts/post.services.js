@@ -76,8 +76,7 @@ export const patchPostById = async (id, data) => {
         content: "posts",
         url: "postLink",
     }
-    //nếu key của fieldMap == key của data => đẩy key-value object có tên key của fieldMap
-    //nếu postLink có dữ liệu thì update bảng post_links
+
     const splitData = {
         posts: {},
         postLink: {},
