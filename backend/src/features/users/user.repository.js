@@ -52,7 +52,7 @@ export const findAll = async () => {
 export const findById = async (id) =>{
     const result = await pool.query(
         `
-        SELECT id, email, username, deleted_at
+        SELECT id, email, username, created_at
         FROM users
         WHERE id = $1
         AND deleted_at IS NULL
