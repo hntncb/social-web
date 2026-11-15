@@ -18,7 +18,9 @@ export const RegisterForm = () => {
       console.log(error);
     }
   }
-
+  const navigateLogin = () => {
+    navigate('/login');
+  }
   return(
     <main>
       <div className='flex bg-emerald-100 p-2 gap-5'>
@@ -28,6 +30,7 @@ export const RegisterForm = () => {
           <Button type='submit'>
             Đăng kí
           </Button>
+          <button onClick={()=>navigateLogin()}>quay lại Đăng nhập</button>
         </form>
       </div>
     </main>

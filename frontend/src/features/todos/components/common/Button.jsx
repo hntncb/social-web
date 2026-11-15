@@ -3,7 +3,7 @@ export const Button = ({
     type='button',
     onClick,
     loading = false,
-    className='border bg-blue-200'
+    className='border bg-blue-200 cursor-pointer'
 }) => {
     return(
         <button

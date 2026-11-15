@@ -77,6 +77,7 @@ export const ListPostForm=()=>{
             timeStyle: "short"
         });
     };
+    
     return(
         <div>
             <main>

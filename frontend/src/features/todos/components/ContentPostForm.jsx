@@ -1,23 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Button } from "./common/Button";
 
 export const PostForm = () => {
-    const [content, setContent] = useState(null);
+    const [postContent, setPostContent] = useState(null);
     const [comment, setComment] = useState([]);
+    const [isOpen, setOpen] = useState(null);
+    const token = localStorage.getItem("accessToken");
+
     const currentUserId = localStorage.getItem("current_id");
     
     const { id } = useParams();
-    const getContent = async() =>{
+    const getPostContent = async() =>{
         const response = await axios.get(`/v1/posts/${id}`);
-        setContent(response.data.data);
+        setPostContent(response.data.data);
     }
     const getComment = async() =>{
         const response = await axios.get(`/v1/comments/post/${id}`);
         setComment(response.data);
     }
-
-    useEffect(()=>{getContent();getComment();}, [id]);
+    
+    useEffect(()=>{getPostContent();getComment();}, [id]);
     const replycomment = new Map()
 
     for(const a of comment){
@@ -28,10 +32,40 @@ export const PostForm = () => {
             replycomment.get(a.parent_id).push(a.id);
         }
     }
-    
+    const editContent=async(e)=>{
+        e.preventDefault();
+
+        const id = postContent.posts.id;
+        const formPost = e.target;
+        const title = formPost.elements.title.value;
+        const content = formPost.elements.content.value;
+        const url = formPost.elements.url.value;
+
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await axios.patch(
+                `/v1/posts/${id}`,
+                {
+                    title,
+                    content,
+                    url
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            e.target.reset();
+            await getComment();
+        } catch (error) {
+            console.log(error);
+        }    
+    }
     const createComment=async(e)=>{
         e.preventDefault();
-        const token = localStorage.getItem("accessToken");
+        
         const post_id = id;
         const content = e.target.elements.content.value;
         try {
@@ -54,9 +88,33 @@ export const PostForm = () => {
             console.log(error);
         }    
     }
+    const editComment=async(e, comment_id)=>{
+        e.preventDefault();
+        
+        const content = e.target.elements.editContent.value;
+        try {
+            const response = await axios.patch(
+                `/v1/comments/${comment_id}`,
+                {
+                    content
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+            e.target.reset();
+            await getComment();
+        } catch (error) {
+            console.log(error);
+        }    
+    }
+    
     const createReply=async(e, comment_id)=>{
         e.preventDefault();
-        const token = localStorage.getItem("accessToken");
+        
         const post_id = id;
         const parent_id = comment_id;
         const content = e.target.elements.replyContent.value;
@@ -81,22 +139,41 @@ export const PostForm = () => {
             console.log(error);
         }    
     }
+
     const [showReply, setShowReply] = useState(null);
+    const [showeditReply, setShowEditReply] = useState(null);
 
     return(
         <div>
             <main>
                 <div className="py-5">Nội dung bài viết
-                    {content && (
+                    {postContent && (
                         <article className="border bg-amber-100">
-                            <b>Người đăng: {content.author.username}</b>
-                            {content.posts.url &&
-                                (<p>Chỉnh sửa lúc:{content.edited_at}</p>)
+                            <b>Người đăng: {postContent.author.username}</b>
+                            {currentUserId === String(postContent.author.id) && (
+                                <button
+                                    type="button"
+                                    onClick={() => (setOpen(!isOpen))}
+                                >
+                                    Sửa bài viết
+                                </button>
+                            )}
+                            {isOpen && (
+                                <form className="flex flex-col border p-2" onSubmit={editContent}>
+                                    <input type="text" name="title" placeholder="Tiêu đề"/>
+                                    <input type="text" name="content" placeholder="Nội dung"/>
+                                    <input type="text" name="url" placeholder="Link ảnh"/>
+                                    <button className='border self-start py-2 px-4'>Sửa</button>
+                                </form>
+                            )}
+                            
+                            {postContent.posts.edited_at &&
+                                (<p>Chỉnh sửa lúc:{postContent.posts.edited_at}</p>)
                             }
-                            {content.url &&
-                                (<img className="w-auto h-auto border p-5" src={content.posts.url}/>)
+                            {postContent.url &&
+                                (<img className="w-auto h-auto border p-5" src={postContent.posts.url}/>)
                             }
-                            <p>{content.posts.content}</p>
+                            <p>{postContent.posts.content}</p>
                         </article>
                     )}
                 </div>
@@ -109,25 +186,28 @@ export const PostForm = () => {
                         .filter(item => item.parent_id === null)
                         .map((item, index) => (
                             <article key={item.id || index} className="border p-3">
+                                <p>{item.id}</p>
                                 <b>{item.user_name}</b>
                                 <p>{item.content}</p>
                                 <div className="flex gap-1">
-                                    <button
+                                    <Button
                                         type="button"
                                         onClick={() => setShowReply(
                                             showReply === item.id ? null : item.id
                                         )}
                                     >
                                         Phản hồi
-                                    </button>
+                                    </Button>
                                     
                                     {currentUserId===item.user_id &&
-                                        <button 
+                                        <Button 
                                             type="button"
-                                            onClick={() => console.log("click")}
+                                            onClick={() => setShowEditReply(
+                                            showeditReply === item.id ? null : item.id
+                                            )}
                                         >
                                             Sửa
-                                        </button>}
+                                        </Button>}
                                 </div>
 
                                 {comment 
@@ -137,25 +217,28 @@ export const PostForm = () => {
                                             key={reply.id}
                                             className="ml-8 border-l-2 p-2"
                                         >
+                                            <b>{reply.id}</b>
                                             <b>{reply.user_name}</b>
                                             <p>{reply.content}</p>
                                             <div className="flex gap-3">
-                                                <button
+                                                <Button
                                                     type="button"
                                                     onClick={() => setShowReply(
                                                         showReply === item.id ? null : item.id
                                                     )}
                                                 >
                                                     Phản hồi
-                                                </button>
+                                                </Button>
                                                 
                                                 {currentUserId===item.user_id &&
-                                                    <button 
+                                                    <Button 
                                                         type="button"
-                                                        onClick={console.log(item.id)}
+                                                        onClick={() => setShowEditReply(
+                                                            showeditReply === item.id ? null : item.id
+                                                        )}
                                                     >
                                                         Sửa
-                                                    </button>}
+                                                    </Button>}
                                             </div>
                                         </article>
                                     ))
@@ -166,6 +249,19 @@ export const PostForm = () => {
                                         <input
                                             type="text"
                                             name="replyContent"
+                                            placeholder="Nội dung"
+                                            required
+                                        />
+                                        <button type="submit" className="border">
+                                            Gửi
+                                        </button>
+                                    </form>
+                                )}
+                                {showeditReply === item.id && (
+                                    <form onSubmit={(e) => editComment(e, item.id)}>
+                                        <input
+                                            type="text"
+                                            name="editContent"
                                             placeholder="Nội dung"
                                             required
                                         />

@@ -10,7 +10,10 @@ export const useLogin = () => {
       setLoading(true);
       setError(null);
 
-      const response = await login(data);
+      const response = await login(
+        data.username,
+        data.password
+      );
 
       return response.data;
     } catch (err) {
