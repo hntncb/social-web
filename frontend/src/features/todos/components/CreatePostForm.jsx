@@ -3,7 +3,7 @@ import { Button } from "./common/Button";
 import { Form } from "./common/Form";
 import { userCreatePost } from "../hooks/useCreatePost";
 
-export const CreatePostForm=()=>{
+export const CreatePostForm=({onPostCreated})=>{
     const {handleCreatePost, loading, error} = userCreatePost();
     const [isAddPost, setAddPost] = useState(null);
 
@@ -15,7 +15,7 @@ export const CreatePostForm=()=>{
         const content = formPost.elements.content.value;
         const url = formPost.elements.url.value;
         await handleCreatePost({title, content, url});
-        //await getPost();
+        onPostCreated();
         formPost.reset();
     }
     return (

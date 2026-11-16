@@ -11,9 +11,14 @@ export const ListPostForm=()=>{
 
     const [posts, setPosts] = useState([]);
     const [PostCount, setPostCount] = useState(null);
+    const [ hasChange, setHasChange] = useState(0);
     const { currentPage } = useParams();
 
     const page = Number(currentPage) || 0;
+
+    const handleHasChange = () => {
+        setHasChange(prev => !prev);
+    }
 
     const getPost = async(limit=10, page=0) => {
         const offset = (10*page)
@@ -27,7 +32,9 @@ export const ListPostForm=()=>{
             setPostCount(listPost.data.count||0);
         }
     }
-
+    useEffect(() => {
+        getPost();
+    }, [hasChange]);
     useEffect(() => {
         getPost(10, page);
     }, [page]);
@@ -56,7 +63,7 @@ export const ListPostForm=()=>{
     return(
         <div className="bg-blue-100">
             <main className="flex flex-col items-center min-h-screen ">
-                <CreatePostForm /> 
+                <CreatePostForm onPostCreated={handleHasChange}/> 
                 <div className="w-2/3 py-4">
                     {posts.map((post) => (
                     <article key={post.id} className="bg-amber-100 border p-2">

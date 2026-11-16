@@ -35,17 +35,18 @@ export const editPostContent = async(data)=>{
     return response;
 }
 
-export const createPostComment = async(data)=>{
+export const createPostComment = async({post_id, content})=>{
     const response = await api.post(
         `/v1/comments`,
         {
-            data
+            post_id, 
+            content
         }
     );
     return response;
 }
 
-export const editPostComment = async()=>{
+export const editPostComment = async({comment_id, content})=>{
     const response = await api.patch(
         `/v1/comments/${comment_id}`,
         {
@@ -55,7 +56,7 @@ export const editPostComment = async()=>{
     return response;
 }
 
-export const createCommentReply = async()=>{
+export const createCommentReply = async({post_id, parent_id, content})=>{
     const response = await api.post(
         `/v1/comments`,
         {
