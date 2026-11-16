@@ -1,29 +1,44 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/common/Button'
 import { useLogin } from '../hooks/useLogin';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from 'react';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
 
   const { handleLogin, loading, error } = useLogin();
 
-  const onSubmit  = async (e) => {
+  useEffect(() => {
+    if (error) {
+      if (error.status === 401) {
+        toast.error("Sai tên đăng nhập hoặc mật khẩu!");
+      }
+      else {
+        toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
+      }
+    }
+  }, [error]);
+
+  const onSubmit  = async (e) => {{
     e.preventDefault();
 
     const formLogin = e.target;
     const username = formLogin.elements.username.value;
     const password = formLogin.elements.password.value;
-    try {
-      const response = await handleLogin({username, password});
+    if(!username.trim() || !password.trim()){
+      toast.warning("Tài khoản hoặc mật khẩu không được để trống");
+      return;
+    }
+    const response = await handleLogin({username, password});
+    if(response){
+      navigate('/listpost/0');
       const accessToken = response.data.accessToken;
+
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('current_id', response.data.user.id);
-      navigate('/listpost/0');
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        console.log(error);
-      }
-    }
+    }}
   };
 
   const navigateRegister = () => {
@@ -32,15 +47,16 @@ export const LoginForm = () => {
 
   return(
     <main>
-      <div className='flex bg-emerald-100 p-2 gap-5'>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className='flex flex-col bg-emerald-100 p-2 gap-5'>
         <form className='flex flex-col p-2 border' onSubmit={onSubmit}>
           <input type="text" name='username' placeholder='Tên đăng nhập'/>
           <input type="password" name='password' placeholder='Mật khẩu'/>
           <Button type='submit' disabled={loading}>
-            Đăng nhập
+            {loading ? "Đang xử lý..." : "Đăng nhập"}
           </Button>
         </form>
-        <Button onClick={()=>navigateRegister()}>hoặc Đăng kí</Button>
+        <Button onClick={()=>navigateRegister()} className=''>hoặc Đăng kí</Button>
       </div>
     </main>
   );

@@ -4,7 +4,7 @@ export const ListPostPage = () => {
   return (
       <div className="">
         <header>
-          Bài viết
+          Danh sách bài viết
         </header>
         <main className="flex-1 py-2">
           <ListPostForm />

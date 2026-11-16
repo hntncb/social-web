@@ -1,10 +1,14 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate,useParams } from "react-router-dom";
 import { Button } from "./common/Button";
+import { useGetPost } from "../hooks/useGetPost";
+import { CreatePostForm } from "./CreatePostForm";
 
 export const ListPostForm=()=>{
     const navigate = useNavigate();
+
+    const {handleGetPost, loading, error} = useGetPost();
+
     const [posts, setPosts] = useState([]);
     const [PostCount, setPostCount] = useState(null);
     const { currentPage } = useParams();
@@ -12,50 +16,21 @@ export const ListPostForm=()=>{
     const page = Number(currentPage) || 0;
 
     const getPost = async(limit=10, page=0) => {
-        try {
-            const offset = (10*page)
-            const list = await axios.get(`/v1/posts/pages?limit=${limit}&offset=${offset}`);
-            
-            setPosts(list.data.data.posts);
-            setPostCount(list.data.count||0);
-        } catch (error) {
-            console.log(error);
+        const offset = (10*page)
+        const params = {
+            limit, offset
+        }
+        const listPost = await handleGetPost(params);
+
+        if(listPost){
+            setPosts(listPost.data.posts);
+            setPostCount(listPost.data.count||0);
         }
     }
 
     useEffect(() => {
         getPost(10, page);
     }, [page]);
-
-    const post = async(e) =>{
-        e.preventDefault();
-
-        const formPost = e.target;
-        const title = formPost.elements.title.value;
-        const content = formPost.elements.content.value;
-        const url = formPost.elements.url.value;
-        try {
-            const token = localStorage.getItem("accessToken");
-            const response = await axios.post(
-                `/v1/posts`,
-                {
-                    title,
-                    content,
-                    url
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                }
-            );
-            await getPost();
-            formPost.reset();
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
     const firstPage = () => {
         navigate("/listpost/0");
@@ -79,17 +54,10 @@ export const ListPostForm=()=>{
     };
     
     return(
-        <div>
-            <main>
-                <div className="bg-amber-200 w-1/2"> Hãy thêm một bài viết
-                    <form className="flex flex-col border p-2" onSubmit={post}>
-                        <input type="text" name="title" placeholder="Tiêu đề"/>
-                        <input type="text" name="content" placeholder="Nội dung"/>
-                        <input type="text" name="url" placeholder="Link ảnh"/>
-                        <button className='border self-start py-2 px-5'>Đăng bài</button>
-                    </form>
-                </div>
-                <div className=" py-4 ">
+        <div className="bg-blue-100">
+            <main className="flex flex-col items-center min-h-screen ">
+                <CreatePostForm /> 
+                <div className="w-2/3 py-4">
                     {posts.map((post) => (
                     <article key={post.id} className="bg-amber-100 border p-2">
                         <b className="text-blue-500" onClick={()=>navigate(`/post/${post.id}`)}>{post.title}</b>
@@ -100,7 +68,7 @@ export const ListPostForm=()=>{
                 </div>
             </main>
             <footer>
-                <div className="border flex p-1 gap-2">
+                <div className="border flex flex-row items-center justify-center p-2 gap-2">
                     <Button onClick={firstPage}>Trang đầu</Button>
                     {page > 0 && (
                     <Button onClick={previousPage}>Trang trước</Button>

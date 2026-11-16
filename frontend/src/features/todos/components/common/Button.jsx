@@ -3,13 +3,13 @@ export const Button = ({
     type='button',
     onClick,
     loading = false,
-    className='border bg-blue-200 cursor-pointer'
+    className=''
 }) => {
     return(
         <button
             type={type}
             onClick={onClick}
-            className={className}
+            className={`border rounded-sm bg-blue-100 cursor-pointer flex justify-center items-center text-center ${className}`}
             >
             {loading ? 'Đang xử lý...' : children}
         </button>

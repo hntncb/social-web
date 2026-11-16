@@ -17,7 +17,7 @@ export const useLogin = () => {
 
       return response.data;
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại');
+      setError(err.response || 'Đăng nhập thất bại');
       throw err;
     } finally {
       setLoading(false);

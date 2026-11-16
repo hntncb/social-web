@@ -1,37 +1,44 @@
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {Button} from '../components/common/Button'
+import { useRegister } from '../hooks/useRegister';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const RegisterForm = () => {
   const navigate = useNavigate();
+  const {handleRegister, loading, error} = useRegister();
 
-  const handleRegister=async(e)=>{
+  const onSubmit = async(e)=>{
     e.preventDefault();
-
+    
     const formRegister = e.target;
     const username = formRegister.elements.username.value;
     const password = formRegister.elements.password.value;
-    try {
-      await axios.post('/v1/auth/register', {username, password});
-      navigate('/');
-    } catch (error) {
-      console.log(error);
+    if(!username.trim() || !password.trim()){
+      toast.warning("tài khoản hoặc mật khẩu không được để trống");
+      return;
     }
+    await handleRegister({username, password});
   }
   const navigateLogin = () => {
     navigate('/login');
   }
   return(
     <main>
-      <div className='flex bg-emerald-100 p-2 gap-5'>
-        <form className='flex flex-col p-2 border' onSubmit={handleRegister}>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className='flex flex-col bg-emerald-100 p-2 gap-5'>
+        <form className='flex flex-col p-2 border' onSubmit={onSubmit} method='POST'>
+          {error && error.response?.status===409 &&
+          (
+            toast.error("Tài khoản đã tồn tại")
+          )}
           <input type="text" name='username' placeholder='Tên đăng nhập'/>
           <input type="password" name='password' placeholder='Mật khẩu'/>
-          <Button type='submit'>
+          <Button type='submit' disabled={loading}>
             Đăng kí
           </Button>
-          <button onClick={()=>navigateLogin()}>quay lại Đăng nhập</button>
         </form>
+        <Button onClick={()=>navigateLogin()} className=''>quay lại Đăng nhập</Button>
       </div>
     </main>
   );
