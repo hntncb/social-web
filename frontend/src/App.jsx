@@ -14,7 +14,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route element={<NavLayout />}>
         <Route path="/listpost/:currentPage" element={<ListPostPage />} />
-        <Route path="/post/:id" element={<PostPage />} />
+        <Route path="/post/:PostId" element={<PostPage />} />
         <Route path="/me" element={<SelfInfomationPage />} />
       </Route>
     </Routes>

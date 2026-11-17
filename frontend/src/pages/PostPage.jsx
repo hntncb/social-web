@@ -1,12 +1,12 @@
-import { PostForm } from "../features/todos/components/ContentPostForm";
+import { DetailsPostForm } from "@/features/posts/components/DetailsPostForm";
 
 export const PostPage = () => {
     return (
         <div className="flex bg flex-col">
             <main className="flex-1">
-                <PostForm />
+                <DetailsPostForm />
             </main>
-            <footer className=''>
+            <footer>
                 <p>Trang web được tạo với mục đính thử nghiệm và học tập. Vui lòng không nhập thông tin nhạy cảm</p>
             </footer>
         </div>

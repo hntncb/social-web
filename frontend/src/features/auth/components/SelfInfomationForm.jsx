@@ -1,8 +1,8 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react"
-import { Button } from "./common/Button";
-import { Form } from "./common/Form";
+import {Button} from '@/shared/components/Button'
+import { Form } from "@/shared/components/Form";
 
 export const SelfInfomationForm = () => {
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button } from "./common/Button";
-import { Form } from "./common/Form";
+import { Button } from "../../../shared/components/Button";
+import { Form } from "../../../shared/components/Form";
 import { userCreatePost } from "../hooks/useCreatePost";
 
 export const CreatePostForm=({onPostCreated})=>{

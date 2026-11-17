@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { Button } from "../features/todos/components/common/Button";
+import { Button } from "../shared/components/Button";
 import { useNavigate } from "react-router-dom";
 
 export const NavLayout = () => {

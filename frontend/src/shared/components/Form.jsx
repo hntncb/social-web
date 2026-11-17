@@ -6,7 +6,7 @@ export const Form = ({
     return(
         <form 
         onSubmit={onSubmit}
-        className={`[&_input]:border [&_input]:rounded-lg bg-auto ${className}`}
+        className={`[&_input]:border [&_input]:rounded-sm bg-auto ${className}`}
         >
             {children}
         </form>

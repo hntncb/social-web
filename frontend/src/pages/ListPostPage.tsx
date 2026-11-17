@@ -1,4 +1,4 @@
-import { ListPostForm } from '../features/todos/components/ListPostForm';
+import { ListPostForm } from '../features/posts/components/ListPostForm';
 
 export const ListPostPage = () => {
   return (

@@ -1,16 +1,16 @@
-import { editPostComment } from "../services/postService";
+import { createPostComment } from "../../comments/services/commentServices";
 import { useState } from "react";
 
-export const useEditPostComment = () => {
+export const useCreatePostComment = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleEditPostComment = async(params) => {
+    const handleCreatePostComment = async(params) => {
         try {
             setLoading(true);
             setError(null);
-            
-            const response = await editPostComment(params);
+            console.log({params});
+            const response = await createPostComment(params);
             
             return response.data;
         } catch (error) {
@@ -21,6 +21,6 @@ export const useEditPostComment = () => {
         }
     }
     return {
-        handleEditPostComment, loading, error
+        handleCreatePostComment, loading, error
     }
 }

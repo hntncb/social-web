@@ -1,4 +1,4 @@
-import { getPostComment } from "../services/postService";
+import { getPostComment } from "@/features/comments/services/commentServices";
 import { useState } from "react";
 
 export const useGetPostComment = () => {
