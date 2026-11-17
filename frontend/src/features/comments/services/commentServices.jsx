@@ -6,7 +6,6 @@ export const getPostComment = async(id)=>{
 }
 
 export const createPostComment = async(params)=>{
-    console.log(params);
     const response = await api.post(
         `/v1/comments`,
         params

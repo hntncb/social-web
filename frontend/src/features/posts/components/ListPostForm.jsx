@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate,useParams } from "react-router-dom";
-import { Button } from "../../../shared/components/Button";
+import { Button } from "@/shared/components/Button";
 import { useGetPost } from "../hooks/useGetPost";
 import { CreatePostForm } from "./CreatePostForm";
 

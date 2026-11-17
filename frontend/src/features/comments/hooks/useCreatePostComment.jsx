@@ -9,10 +9,10 @@ export const useCreatePostComment = () => {
         try {
             setLoading(true);
             setError(null);
-            console.log({params});
+
             const response = await createPostComment(params);
             
-            return response.data;
+            return response;
         } catch (error) {
             setError(error.response || 'Tạo bài viết thất bại');
             throw error;

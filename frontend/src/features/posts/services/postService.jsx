@@ -1,18 +1,15 @@
-import api from "../../../shared/services/api";
+import api from "@/shared/services/api";
 
 export const getPost = async({limit, offset}) =>{
     const list = await api.get(`/v1/posts/pages?limit=${limit}&offset=${offset}`);
     return list;
 }
 
-export const createPost = async({title, content, url}) =>{
+export const createPost = async(params) =>{
+    console.log(params);
     const response = await api.post(
         `/v1/posts`,
-        {
-            title,
-            content,
-            url
-        }
+        params
     );
     return response;
 }

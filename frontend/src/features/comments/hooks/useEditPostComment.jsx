@@ -12,7 +12,7 @@ export const useEditPostComment = () => {
             
             const response = await editPostComment(params);
             
-            return response.data;
+            return response;
         } catch (error) {
             setError(error.response || 'Tạo bài viết thất bại');
             throw error;
