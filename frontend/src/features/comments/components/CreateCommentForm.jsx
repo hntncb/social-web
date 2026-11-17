@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useCreatePostComment } from "../hooks/useCreatePostComment";
 import { useParams } from "react-router-dom";
 
-export const CreateCommentForm = () => {
+export const CreateCommentForm = ({hasNewItem}) => {
     const [] = useState();
     const { handleCreatePostComment, loading, error } = useCreatePostComment();
 
@@ -14,8 +14,12 @@ export const CreateCommentForm = () => {
         e.preventDefault();
         const post_id = PostId;
         const content = e.currentTarget.elements.namedItem("content").value;
-        console.log({post_id, content});
-        handleCreatePostComment({post_id, content});
+        
+        const response = handleCreatePostComment({post_id, content});
+        if(response){
+            hasNewItem();
+            e.currentTarget.reset();
+        }
     }
 
     return (

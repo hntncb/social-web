@@ -6,8 +6,13 @@ import { CreateCommentForm } from "./CreateCommentForm";
 
 export const CommentForm = () => {
     const [ comment, setComment ] = useState([]);
-    const { handleGetPostComment, loading, error } = useGetPostComment();
+    const [ onNewItem, setNewItem ] = useState(0);
     const [ listReply, setlistReply ] = useState({});
+    const { handleGetPostComment, loading, error } = useGetPostComment();
+
+    const hasNewItem = () => {
+        setNewItem(onNewItem => onNewItem+1);
+    }
 
     const getComment = async() =>{
         const response = await handleGetPostComment(PostId);
@@ -23,13 +28,12 @@ export const CommentForm = () => {
             return acc;
         },{});
         setlistReply(reply);
-        console.log(reply);
     }
 
     const renderComment = (item) => {
         return (
             <div key={item.id} className="ml-6 border-l">
-                <CommentItem item={item} />
+                <CommentItem item={item} hasNewItem={hasNewItem}/>
 
                 {listReply[item.id]?.map(reply => (
                     renderComment(reply)
@@ -40,12 +44,12 @@ export const CommentForm = () => {
 
     const {PostId} = useParams();
     
-    useEffect(()=>{getComment()}, [PostId]);
+    useEffect(()=>{getComment()}, [PostId, onNewItem]);
     
     return (
         <main>
             <div className="flex flex-col items-center w-full gap-3">
-                <CreateCommentForm />
+                <CreateCommentForm hasNewItem={hasNewItem}/>
                 {comment
                     .filter(item => item.parent_id === null)
                     .map((item, index) => (
@@ -53,7 +57,7 @@ export const CommentForm = () => {
                         key={item.id || index} 
                         className="border border-b-black flex flex-col bg-red-100 rounded-md p-4 w-full max-w-xl gap-2"
                         >
-                            <CommentItem item={item}/>
+                            <CommentItem item={item} hasNewItem={hasNewItem}/>
 
                             {listReply[item.id]?.map(reply => (
                                 renderComment(reply)
