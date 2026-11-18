@@ -38,14 +38,14 @@ describe("test comment services", () => {
             mock.method(commentRepository, "findAll", async () => mockComments);
 
             const result = await commentServices.getAll();
-            assert.deepStrictEqual(result, mockComments);
+            assert.deepStrictEqual(result, { comment: mockComments });
         });
 
         it("should throw 404 error when no comments found", async () => {
             mock.method(commentRepository, "findAll", async () => null);
 
             const result = await commentServices.getAll();
-            assert.deepStrictEqual(result, []);
+            assert.deepStrictEqual(result, { comment: null });
         });
     });
 

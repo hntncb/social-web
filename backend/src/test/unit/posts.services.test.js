@@ -59,8 +59,9 @@ describe("test post service", () => {
             });
             
             const result = await postServices.getPostsWithOffset(limit, offset);
-            
-            assert.deepStrictEqual(result, mockPosts);
+            const expected = mockPosts.map(({ content, deleted_at, ...expectedResult }) => expectedResult);
+
+            assert.deepStrictEqual(result.posts, expected);
             assert.equal(mockRepoFindOffset.mock.callCount(), 1);
             assert.equal(mockRepoFindOffset.mock.calls[0].arguments[0], limit);
             assert.equal(mockRepoFindOffset.mock.calls[0].arguments[1], offset);
@@ -76,7 +77,10 @@ describe("test post service", () => {
             
             const result = await postServices.getPostsWithOffset(limit, offset);
 
-            assert.deepStrictEqual(result, []);
+            assert.deepStrictEqual(result, {
+                count: 0,
+                posts: []
+            });
 
             assert.equal(mockRepoFindOffset.mock.callCount(), 1);
             assert.equal(mockRepoFindOffset.mock.calls[0].arguments[0], limit);
@@ -119,8 +123,9 @@ describe("test post service", () => {
             });
             
             const result = await postServices.getPostWithCursor(post_id, limit);
+            const expected = mockPosts.map(({ content, deleted_at, ...expectedResult }) => expectedResult);
 
-            assert.deepStrictEqual(result, mockPosts);
+            assert.deepStrictEqual(result.posts, expected);
             assert.equal(mockRepoFindCursor.mock.callCount(), 1);
             assert.equal(mockRepoFindCursor.mock.calls[0].arguments[0], post_id);
             assert.equal(mockRepoFindCursor.mock.calls[0].arguments[1], limit);
@@ -135,7 +140,11 @@ describe("test post service", () => {
             
             const result = await postServices.getPostWithCursor(post_id, limit);
 
-            assert.deepStrictEqual(result, []);
+            assert.deepStrictEqual(result,{
+               count: 0,
+               posts: []
+            });
+
             assert.equal(mockRepoFindCursor.mock.callCount(), 1);
             assert.equal(mockRepoFindCursor.mock.calls[0].arguments[0], post_id);
             assert.equal(mockRepoFindCursor.mock.calls[0].arguments[1], limit);
@@ -169,7 +178,7 @@ describe("test post service", () => {
         //các trường hợp bình thường
         it("should return post from repository", async () => {
             const id = 1;
-            const expectedPost = mockPosts[0];
+            const { author_id, deleted_at, updated_at, ...expectedPost } = mockPosts[0];
             const mockRepoFindById = mock.method(
                 postRepository,
                 "findPostById",
@@ -178,8 +187,8 @@ describe("test post service", () => {
             });
             
             const result = await postServices.getPostById(id);
-
-            assert.deepStrictEqual(result, expectedPost);
+            
+            assert.deepStrictEqual(result.posts, expectedPost);
             assert.equal(mockRepoFindById.mock.callCount(),1);
             assert.equal(mockRepoFindById.mock.calls[0].arguments, id);
         });
@@ -197,7 +206,8 @@ describe("test post service", () => {
             
             const result = await postServices.getPostById(id);
 
-            assert.deepStrictEqual(result, []);
+            assert.deepStrictEqual(result.author, null);
+            assert.deepStrictEqual(result.posts, {});
             assert.equal(mockRepoFindById.mock.callCount(),1);
             assert.equal(mockRepoFindById.mock.calls[0].arguments, id);
         });

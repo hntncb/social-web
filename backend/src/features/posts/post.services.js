@@ -29,14 +29,14 @@ export const getPostById = async (id) => {
         error.status = 404;
         throw error;
     }
-    const author = {
+    const author = post.length > 0 ? {
         id: post.author_id,
         username: post.username
-    };
+    } : null;
     const {deleted_at,updated_at,author_id,...postData} = post;
 
     return {
-        posts: postData,
+        posts: postData ?? [],
         author
     };
 } 
