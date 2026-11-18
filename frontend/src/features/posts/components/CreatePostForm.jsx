@@ -28,7 +28,7 @@ export const CreatePostForm=({onPostCreated})=>{
         if(title && title.trim() !== ''){
             params.title = title;
         }
-        if(content && content.trim() === ''){
+        if(content && content.trim() !== ''){
             params.content = content;
         }
         if(url && url.trim() !== ''){

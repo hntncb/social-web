@@ -6,7 +6,7 @@ export const getPost = async({limit, offset}) =>{
 }
 
 export const createPost = async(params) =>{
-    console.log(params);
+    
     const response = await api.post(
         `/v1/posts`,
         params
