@@ -1,6 +1,6 @@
 import { mock, afterEach, beforeEach, describe, it } from "node:test";
 import assert from "node:assert";
-import authMiddleware from "../../midlleware/auth.middleware.js";
+import authMiddleware from "../../middleware/auth.middleware.js";
 import jwt from "jsonwebtoken";
 
 describe("test authservices", () => {

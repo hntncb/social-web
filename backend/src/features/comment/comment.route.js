@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authorizeCommentOwner, authorizeCommentOwnerOrAdmin } from "../comment/comment.authorization.js";
-import { authenticate } from "../../midlleware/auth.middleware.js";
-import validateParams from "../../midlleware/validateParams.middleware.js";
+import { authenticate } from "../../middleware/auth.middleware.js";
+import validateParams from "../../middleware/validateParams.middleware.js";
 import commentController from "./comment.controller.js";
 
 const route = Router();

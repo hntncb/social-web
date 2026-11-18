@@ -1,8 +1,8 @@
 import { Router } from "express"
 import * as postController from "./post.controller.js" 
 import { authorizePostOwner, authorizePostOwnerOrAdmin } from "./post.authorization.js";
-import { authenticate } from "../../midlleware/auth.middleware.js"
-import validateParams from "../../midlleware/validateParams.middleware.js";
+import { authenticate } from "../../middleware/auth.middleware.js"
+import validateParams from "../../middleware/validateParams.middleware.js";
 
 const route = Router();
 /**

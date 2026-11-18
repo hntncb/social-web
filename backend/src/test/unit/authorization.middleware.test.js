@@ -1,6 +1,6 @@
 import { mock, afterEach, beforeEach, describe, it } from "node:test";
 import assert from "node:assert";
-import authorizationMiddleware from "../../midlleware/authorization.middleware.js";
+import authorizationMiddleware from "../../middleware/authorization.middleware.js";
 
 describe("test autorization", () => {
     let req;

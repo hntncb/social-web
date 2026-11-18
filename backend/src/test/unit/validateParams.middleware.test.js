@@ -1,5 +1,5 @@
 import { describe, beforeEach, afterEach, it, mock } from "node:test";
-import validateParams from "../../midlleware/validateParams.middleware.js";
+import validateParams from "../../middleware/validateParams.middleware.js";
 import assert from "node:assert";
 
 describe("test ValidateParams Middleware", () => {

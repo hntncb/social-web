@@ -37,14 +37,14 @@ export const SelfInfomationForm = () => {
 
         const editField = e.target;
         const email = editField.elements.email?.value;
-        const passworld = editField.elements.passworld?.value;
+        const password = editField.elements.password?.value;
         const decoded = jwtDecode(token);
         const id = decoded.sub;
 
         const response = await axios.patch(`/v1/users/${id}`,
             {
                 email,
-                passworld
+                password
             },
             {
                 headers: 
