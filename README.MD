@@ -20,10 +20,11 @@ Bạn cũng có thể tự đăng ký một tài khoản thường ngay trên tr
 
 ## Ảnh giao diện
 
+<img src="./docs/login.png" width="400" alt="Mô tả ảnh">
 
 | Danh sách bài viết | Chi tiết bài viết và bình luận |
 |---|---|
-
+<img src="./docs/home.png" height="400" alt="Mô tả ảnh"> | <img src="./docs/detailspost.png" height="400" alt="Mô tả ảnh">
 ## Tính năng
 
 **Xác thực và phân quyền**
