@@ -15,7 +15,7 @@ export const useLogin = () => {
         data.password
       );
 
-      return response.data;
+      return response;
     } catch (err) {
       setError(err.response || 'Đăng nhập thất bại');
       throw err;

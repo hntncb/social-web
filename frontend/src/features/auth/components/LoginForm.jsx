@@ -31,13 +31,14 @@ export const LoginForm = () => {
       toast.warning("Tài khoản hoặc mật khẩu không được để trống");
       return;
     }
+
     const response = await handleLogin({username, password});
+
     if(response){
       navigate('/listpost/0');
-      const accessToken = response.data.accessToken;
 
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('current_id', response.data.user.id);
+      localStorage.setItem('accessToken', response.data.data.accessToken);
+      localStorage.setItem('current_id', response.data.data.user.id);
     }}
   };
 

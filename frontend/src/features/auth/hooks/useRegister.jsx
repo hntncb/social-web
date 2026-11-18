@@ -10,7 +10,7 @@ export const useRegister = () => {
             setLoading(false);
             setError(null);
             const response = await register(data.username, data.password);
-            return response.data;
+            return response;
         } catch (error) {
             setError(error);
             throw error;
