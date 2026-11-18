@@ -106,7 +106,7 @@ describe("comment integration test", () => {
                 .get("/v1/comments")
                 .expect(200);
 
-            assert.ok(Array.isArray(response.body));
+            assert.ok(Array.isArray(response.body.comment));
             assert.strictEqual(response.body.length, 1);
         });
 
