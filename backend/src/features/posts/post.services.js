@@ -29,7 +29,7 @@ export const getPostById = async (id) => {
         error.status = 404;
         throw error;
     }
-    const author = post.length > 0 ? {
+    const author = Object.keys(post).length > 0 ? {
         id: post.author_id,
         username: post.username
     } : null;
