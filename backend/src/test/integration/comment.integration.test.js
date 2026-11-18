@@ -107,7 +107,7 @@ describe("comment integration test", () => {
                 .expect(200);
 
             assert.ok(Array.isArray(response.body.comment));
-            assert.strictEqual(response.body.length, 1);
+            assert.strictEqual(response.body.comment.length, 1);
         });
 
         it("should return status 200 and comments by post_id", async () => {
