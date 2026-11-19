@@ -56,7 +56,7 @@ export const CommentItem = ({item, hasNewItem }) => {
             <div className="grid grid-cols-2 border border-b-black p-2">
                 <b>{item.user_name}</b>
                 <p className="flex justify-end">{item.created_at}</p>
-                <p>{item.content}</p>
+                <p className="whitespace-pre-wrap">{item.content}</p>
             </div>
             <div className="flex gap-3 p-1">
                 <Button className="bg-auto" onClick={()=>setOnShow("reply")}>Phản hồi</Button>
@@ -74,7 +74,9 @@ export const CommentItem = ({item, hasNewItem }) => {
                         EditComment(e, item.id)
                     }
                     }}>
-                    <input className="bg-amber-50" type="text" name={onShow} placeholder={onShow==="reply"?"Nội dung phản hồi":"Nội dung chỉnh sửa"} />
+                    <textarea className="bg-amber-50" rows="1" type="text" name={onShow} 
+                    placeholder={onShow==="reply"?"Nội dung phản hồi":"Nội dung chỉnh sửa"} 
+                    > </textarea>
                     <Button type="submit" disabled={loading}>Gửi</Button>
                 </form>
             )}

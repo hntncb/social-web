@@ -91,12 +91,12 @@ export const DetailsPostForm = () => {
                             {postContent.posts.edited_at &&
                                 (<p className="text-sm">Chỉnh sửa lúc: {postContent.posts.edited_at}</p>)
                             }
-                            <p>{postContent.posts.content}</p>
+                            <p className="whitespace-pre-wrap border p-2">{postContent.posts.content}</p>
                             
                             {isOpen && (
                                 <Form className="border" onSubmit={editContent}>
                                     <input type="text" name="title" placeholder="Tiêu đề"/>
-                                    <input type="text" name="content" placeholder="Nội dung"/>
+                                    <textarea type="text" rows="1" name="content" placeholder="Nội dung"/>
                                     <input type="text" name="url" placeholder="Link ảnh"/>
                                     <Button className='self-start py-2 px-4' type="submit">Sửa</Button>
                                 </Form>

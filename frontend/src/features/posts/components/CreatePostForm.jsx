@@ -62,7 +62,11 @@ export const CreatePostForm=({onPostCreated})=>{
                 {isAddPost && (
                     <Form className="flex flex-col p-3 gap-3" onSubmit={createPost}>
                         <input type="text" name="title" placeholder="Tiêu đề"/>
-                        <input type="text" name="content" placeholder="Nội dung"/>
+                        <textarea
+                            name="content"
+                            placeholder="Nội dung"
+                            rows="4"
+                        ></textarea>
                         <input type="text" name="url" placeholder="Link ảnh"/>
                         <Button type="submit" className='self-start py-2 px-5'>Đăng bài</Button>
                     </Form>
