@@ -12,8 +12,10 @@ import swaggerUi from "swagger-ui-express";
 
 const app = express();
 
+const vite_port = process.env.VITE_APP_URL || 5173;
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: `${vite_port}`,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
