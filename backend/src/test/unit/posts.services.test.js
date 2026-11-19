@@ -248,7 +248,7 @@ describe("test post service", () => {
                 await postServices.getPostById(id);
             }, (error) => {
                 assert.equal(error.message, 'bai viet khong ton tai');
-                assert.equal(error.status, 404);
+                assert.equal(error.statusCode, 404);
                 return true;
             });
             
@@ -534,7 +534,7 @@ describe("test post service", () => {
             await assert.rejects(async()=>{
                 await postServices.patchPostById(id, data);
             }, (error) => {
-                assert.equal(error.status, 404);
+                assert.equal(error.statusCode, 404);
                 return true;
             });
 
@@ -612,7 +612,7 @@ describe("test post service", () => {
             await assert.rejects(async()=>{
                 await postServices.deletePostById(postId);
             }, (error) => {
-                assert.equal(error.status, 404);
+                assert.equal(error.statusCode, 404);
                 return true;
             });
             
