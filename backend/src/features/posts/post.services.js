@@ -26,7 +26,7 @@ export const getPostById = async (id) => {
     
     if (!post) {
         const error = new Error("bai viet khong ton tai");
-        error.status = 404;
+        error.statusCode = 404;
         throw error;
     }
     const author = Object.keys(post).length > 0 ? {
@@ -67,7 +67,7 @@ export const patchPostById = async (id, data) => {
     
     if (!post) {
         const error = new Error("bai viet khong ton tai");
-        error.status = 404;
+        error.statusCode = 404;
         throw error;
     }
 
@@ -117,7 +117,7 @@ export const deletePostById = async (id) => {
     
     if (!post) {
         const error = new Error("bai viet khong ton tai");
-        error.status = 404;
+        error.statusCode = 404;
         throw error;
     }
 
