@@ -1,0 +1,25 @@
+-- migrate:up
+CREATE TYPE user_role AS ENUM ('admin','user');
+
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role DROP DEFAULT;
+
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role TYPE user_role
+USING role::text::user_role;
+
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role SET DEFAULT 'user'::user_role;
+
+-- migrate:down
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role DROP DEFAULT;
+
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role TYPE VARCHAR(20)
+USING role::text::VARCHAR(20);
+
+ALTER TABLE IF EXISTS users
+ALTER COLUMN role SET DEFAULT 'user';
+
+DROP TYPE IF EXISTS user_role;
