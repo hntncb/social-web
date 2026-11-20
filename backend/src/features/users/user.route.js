@@ -1,7 +1,11 @@
-import { Router } from "express";
-import * as userController from "./user.controller.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
-import { authorizeOwnerOrAdmin, authorizeOwner, authorizeRoles } from "../../middleware/authorization.middleware.js";
+import { Router } from 'express';
+import * as userController from './user.controller.js';
+import { authenticate } from '../../middleware/auth.middleware.js';
+import {
+  authorizeOwnerOrAdmin,
+  authorizeOwner,
+  authorizeRoles,
+} from '../../middleware/authorization.middleware.js';
 
 const router = Router();
 
@@ -19,12 +23,7 @@ const router = Router();
  *         description: thành công
  */
 
-router.get(
-    "/",
-    authenticate,
-    authorizeRoles("admin"),
-    userController.getAll
-);
+router.get('/', authenticate, authorizeRoles('admin'), userController.getAll);
 /**
  * @openapi
  * /v1/users/{id}:
@@ -37,21 +36,16 @@ router.get(
  *     parameters:
  *       - in: path
  *         name: id
- *     responses: 
+ *     responses:
  *       200:
  *         description: thành công
  */
-router.get(
-    "/:id",
-    authenticate,
-    authorizeRoles("admin"),
-    userController.getById
-);
+router.get('/:id', authenticate, authorizeRoles('admin'), userController.getById);
 /**
  * @openapi
  * /v1/users/{id}:
  *   patch:
- *     tags: 
+ *     tags:
  *       - Users
  *     summary: '[Admin/Owner] Chỉnh sửa thông tin user'
  *     security:
@@ -80,12 +74,7 @@ router.get(
  *       401:
  *         description: tai khoan hoac mat khau khong dung
  */
-router.patch(
-    "/:id",
-    authenticate,
-    authorizeOwnerOrAdmin,
-    userController.patchById
-);
+router.patch('/:id', authenticate, authorizeOwnerOrAdmin, userController.patchById);
 /**
  * @openapi
  * /v1/users/{id}:
@@ -98,15 +87,10 @@ router.patch(
  *     parameters:
  *       - in: path
  *         name: id
- *     responses: 
+ *     responses:
  *       200:
  *         description: thành công
  */
-router.delete(
-    "/:id",
-    authenticate,
-    authorizeRoles("admin"),
-    userController.deleteById
-);
+router.delete('/:id', authenticate, authorizeRoles('admin'), userController.deleteById);
 
 export default router;

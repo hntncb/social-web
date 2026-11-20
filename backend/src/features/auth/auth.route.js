@@ -1,15 +1,15 @@
-import {Router} from "express";
-import * as authController from "./auth.controller.js";
-import { validateUser } from "./auth.validation.js";
+import { Router } from 'express';
+import * as authController from './auth.controller.js';
+import { validateUser } from './auth.validation.js';
 
 const router = Router();
 
 /**
  * @openapi
  * /v1/auth/login:
- * 	
+ *
  *  post:
- *    tags: 
+ *    tags:
  *      - Auth
  *    summary: Đăng nhập
  *    requestBody:
@@ -22,23 +22,19 @@ const router = Router();
  *               - password
  *             properties:
  *               username:
- *                 type: string 								 
+ *                 type: string
  *                 example: admin
  *               password:
  *                 type: string
  *                 example: 1
- *                          
+ *
  *    responses:
  *      200:
  *        description: thành công
- *      
+ *
  */
 
-router.post(
-    "/login",
-    validateUser,
-    authController.login
-);
+router.post('/login', validateUser, authController.login);
 /**
  * @openapi
  * /v1/auth/register:
@@ -61,12 +57,8 @@ router.post(
  *    responses:
  *      201:
  *        description: thành công
- */  
+ */
 
-router.post(
-    "/register",
-    validateUser,
-    authController.create
-);
+router.post('/register', validateUser, authController.create);
 
 export default router;

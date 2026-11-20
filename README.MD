@@ -4,9 +4,9 @@
 
 ## Demo
 
-| Thành phần | Liên kết |
-|---|---|
-| Ứng dụng web | https://render-proxy-6mhp.onrender.com/ |
+| Thành phần                | Liên kết                                   |
+| ------------------------- | ------------------------------------------ |
+| Ứng dụng web              | https://render-proxy-6mhp.onrender.com/    |
 | Tài liệu API (Swagger UI) | https://render-proxy-6mhp.onrender.com/api |
 
 Tài khoản demo (quyền admin):
@@ -22,41 +22,46 @@ Bạn cũng có thể tự đăng ký một tài khoản thường ngay trên tr
 
 <img src="./docs/login.png" width="400" alt="Mô tả ảnh">
 
-| Danh sách bài viết | Chi tiết bài viết và bình luận |
-|---|---|
-<img src="./docs/home.png" height="400" alt="Mô tả ảnh"> | <img src="./docs/detailspost.png" height="400" alt="Mô tả ảnh">
+| Danh sách bài viết                                       | Chi tiết bài viết và bình luận                                  |
+| -------------------------------------------------------- | --------------------------------------------------------------- |
+| <img src="./docs/home.png" height="400" alt="Mô tả ảnh"> | <img src="./docs/detailspost.png" height="400" alt="Mô tả ảnh"> |
+
 ## Tính năng
 
 **Xác thực và phân quyền**
+
 - Đăng ký, đăng nhập; mật khẩu được băm bằng bcrypt.
 - Xác thực bằng JWT (Bearer token), token có thời hạn cấu hình qua biến môi trường.
 - Hai vai trò: `user` và `admin`. Chủ sở hữu hoặc admin mới được sửa/xoá tài nguyên tương ứng.
 - Frontend tự gắn token vào mọi request và hỏi đăng nhập lại khi phiên hết hạn (401).
 
 **Bài viết**
+
 - Tạo, xem, sửa, xoá bài viết (xoá mềm bằng `deleted_at`).
 - Đính kèm một đường dẫn ảnh cho bài viết (bảng `post_links`, cập nhật theo kiểu upsert trong transaction).
 - Hai kiểu phân trang: theo offset (`/v1/posts/pages`) dùng cho giao diện, và theo con trỏ (`/v1/posts`).
 - Hiển thị thời điểm chỉnh sửa cuối của bài viết.
 
 **Bình luận**
+
 - Bình luận và trả lời bình luận nhiều cấp (cột `parent_id` tự tham chiếu).
 - Sửa bình luận của chính mình; xoá bình luận (chủ sở hữu hoặc admin).
 
 **Người dùng**
+
 - Trang thông tin cá nhân, cập nhật email/mật khẩu.
 - API quản trị người dùng (danh sách, xem, xoá) chỉ dành cho admin.
 
 ## Công nghệ sử dụng
 
-| Class | TechStack |
-|---|---|
-| Backend | Node.js 22, Express 5, `pg` (PostgreSQL driver), `jsonwebtoken`, `bcrypt`, `cors` |
-| Cơ sở dữ liệu | PostgreSQL 16, quản lý migration bằng `dbmate` |
-| Tài liệu API | `swagger-jsdoc`, `swagger-ui-express` (OpenAPI 3.0) |
-| Frontend | React 19, Vite, React Router 7, Tailwind CSS 4, Axios, React Toastify |
-| Kiểm thử | `node:test` (test runner có sẵn của Node), Supertest |
-| DevOps | Docker, Docker Compose, GitHub Actions, Husky (pre-commit) |
+| Class         | TechStack                                                                         |
+| ------------- | --------------------------------------------------------------------------------- |
+| Backend       | Node.js 22, Express 5, `pg` (PostgreSQL driver), `jsonwebtoken`, `bcrypt`, `cors` |
+| Cơ sở dữ liệu | PostgreSQL 16, quản lý migration bằng `dbmate`                                    |
+| Tài liệu API  | `swagger-jsdoc`, `swagger-ui-express` (OpenAPI 3.0)                               |
+| Frontend      | React 19, Vite, React Router 7, Tailwind CSS 4, Axios, React Toastify             |
+| Kiểm thử      | `node:test` (test runner có sẵn của Node), Supertest                              |
+| DevOps        | Docker, Docker Compose, GitHub Actions, Husky (pre-commit)                        |
 
 ## Kiến trúc
 
@@ -110,24 +115,24 @@ Các khoá ngoại dùng `ON DELETE CASCADE`; dữ liệu người dùng, bài v
 
 Toàn bộ endpoint được mô tả và có thể thử trực tiếp tại Swagger UI: `/api`.
 
-| Method | Endpoint | Quyền | Mô tả |
-|---|---|---|---|
-| POST | `/v1/auth/register` | Công khai | Đăng ký |
-| POST | `/v1/auth/login` | Công khai | Đăng nhập, trả về access token |
-| GET | `/v1/posts/pages?limit=&offset=` | Công khai | Danh sách bài viết (offset) |
-| GET | `/v1/posts?post_id=&limit=` | Công khai | Danh sách bài viết (con trỏ) |
-| GET | `/v1/posts/:id` | Công khai | Chi tiết bài viết |
-| POST | `/v1/posts` | Đăng nhập | Tạo bài viết |
-| PATCH | `/v1/posts/:id` | Chủ bài viết | Sửa bài viết |
-| DELETE | `/v1/posts/:id` | Chủ bài viết hoặc admin | Xoá bài viết |
-| GET | `/v1/comments/post/:post_id` | Công khai | Bình luận của một bài viết |
-| GET | `/v1/comments/reply/:parent_id` | Công khai | Các phản hồi của một bình luận |
-| POST | `/v1/comments` | Đăng nhập | Tạo bình luận hoặc phản hồi |
-| PATCH | `/v1/comments/:id` | Chủ bình luận | Sửa bình luận |
-| DELETE | `/v1/comments/:id` | Chủ bình luận hoặc admin | Xoá bình luận |
-| GET | `/v1/users`, `/v1/users/:id` | Admin | Xem người dùng |
-| PATCH | `/v1/users/:id` | Chủ tài khoản hoặc admin | Cập nhật thông tin |
-| DELETE | `/v1/users/:id` | Admin | Xoá người dùng |
+| Method | Endpoint                         | Quyền                    | Mô tả                          |
+| ------ | -------------------------------- | ------------------------ | ------------------------------ |
+| POST   | `/v1/auth/register`              | Công khai                | Đăng ký                        |
+| POST   | `/v1/auth/login`                 | Công khai                | Đăng nhập, trả về access token |
+| GET    | `/v1/posts/pages?limit=&offset=` | Công khai                | Danh sách bài viết (offset)    |
+| GET    | `/v1/posts?post_id=&limit=`      | Công khai                | Danh sách bài viết (con trỏ)   |
+| GET    | `/v1/posts/:id`                  | Công khai                | Chi tiết bài viết              |
+| POST   | `/v1/posts`                      | Đăng nhập                | Tạo bài viết                   |
+| PATCH  | `/v1/posts/:id`                  | Chủ bài viết             | Sửa bài viết                   |
+| DELETE | `/v1/posts/:id`                  | Chủ bài viết hoặc admin  | Xoá bài viết                   |
+| GET    | `/v1/comments/post/:post_id`     | Công khai                | Bình luận của một bài viết     |
+| GET    | `/v1/comments/reply/:parent_id`  | Công khai                | Các phản hồi của một bình luận |
+| POST   | `/v1/comments`                   | Đăng nhập                | Tạo bình luận hoặc phản hồi    |
+| PATCH  | `/v1/comments/:id`               | Chủ bình luận            | Sửa bình luận                  |
+| DELETE | `/v1/comments/:id`               | Chủ bình luận hoặc admin | Xoá bình luận                  |
+| GET    | `/v1/users`, `/v1/users/:id`     | Admin                    | Xem người dùng                 |
+| PATCH  | `/v1/users/:id`                  | Chủ tài khoản hoặc admin | Cập nhật thông tin             |
+| DELETE | `/v1/users/:id`                  | Admin                    | Xoá người dùng                 |
 
 ## Chạy dự án trên máy
 
@@ -143,13 +148,13 @@ cp .env.example .env
 
 Các biến cần có trong `.env`:
 
-| Biến | Ý nghĩa |
-|---|---|
-| `PORT` | Cổng của API (ví dụ `3000`) |
-| `DATABASE_URL` | Chuỗi kết nối PostgreSQL, ví dụ `postgres://USER:PASSWORD@postgres:5432/DB?sslmode=disable` |
-| `JWT_SECRET` | Khoá bí mật ký JWT |
-| `JWT_EXPIRES_IN` | Thời hạn token, ví dụ `1h` |
-| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Thông tin khởi tạo PostgreSQL |
+| Biến                                                | Ý nghĩa                                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `PORT`                                              | Cổng của API (ví dụ `3000`)                                                                 |
+| `DATABASE_URL`                                      | Chuỗi kết nối PostgreSQL, ví dụ `postgres://USER:PASSWORD@postgres:5432/DB?sslmode=disable` |
+| `JWT_SECRET`                                        | Khoá bí mật ký JWT                                                                          |
+| `JWT_EXPIRES_IN`                                    | Thời hạn token, ví dụ `1h`                                                                  |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Thông tin khởi tạo PostgreSQL                                                               |
 
 **2. Khởi động**
 

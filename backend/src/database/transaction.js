@@ -1,25 +1,25 @@
-import pool from "./pool.js";
+import pool from './pool.js';
 
-export const transaction = async (callback) =>{
-    const client = await pool.connect();
+export const transaction = async (callback) => {
+  const client = await pool.connect();
 
-    try{
-        await client.query("BEGIN");
+  try {
+    await client.query('BEGIN');
 
-        const result = await callback(client);
+    const result = await callback(client);
 
-        await client.query("COMMIT");
+    await client.query('COMMIT');
 
-        return result;
-    }catch(error){
-        await client.query("ROLLBACK");
-        //console.log(error);
-        throw error;
-    }finally{
-        client.release();
-    };
+    return result;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    //console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-const transactionModule = {transaction};
+const transactionModule = { transaction };
 
 export default transactionModule;

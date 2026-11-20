@@ -1,8 +1,8 @@
-import { Router } from "express"
-import * as postController from "./post.controller.js" 
-import { authorizePostOwner, authorizePostOwnerOrAdmin } from "./post.authorization.js";
-import { authenticate } from "../../middleware/auth.middleware.js"
-import validateParams from "../../middleware/validateParams.middleware.js";
+import { Router } from 'express';
+import * as postController from './post.controller.js';
+import { authorizePostOwner, authorizePostOwnerOrAdmin } from './post.authorization.js';
+import { authenticate } from '../../middleware/auth.middleware.js';
+import validateParams from '../../middleware/validateParams.middleware.js';
 
 const route = Router();
 /**
@@ -19,7 +19,7 @@ const route = Router();
  *           type: integer
  *           default: 10
  *         description: số bài viết trong 1 trang
- * 
+ *
  *       - in: query
  *         name: offset
  *         schema:
@@ -29,11 +29,7 @@ const route = Router();
  *       200:
  *         description: thành công
  */
-route.get(
-    "/pages",
-    validateParams.validateOffsetParams,
-    postController.getPostsWithOffset
-);
+route.get('/pages', validateParams.validateOffsetParams, postController.getPostsWithOffset);
 /**
  * @openapi
  * /v1/posts:
@@ -41,30 +37,26 @@ route.get(
  *    tags:
  *      - Posts
  *    summary: Lấy danh sách bài viết theo con trỏ
- *      
+ *
  *    parameters:
  *      - in: query
  *        name: post_id
- *        schema: 
+ *        schema:
  *          type: integer
  *      - in: query
  *        name: limit
- *        schema: 
- *          type: integer   
+ *        schema:
+ *          type: integer  
  *    responses:
  *      200:
  *        description: thành công
  */
-route.get(
-    "/",
-    validateParams.validateCursorParams,
-    postController.getPostWithCursor
-); 
+route.get('/', validateParams.validateCursorParams, postController.getPostWithCursor);
 /**
  * @openapi
  * /v1/posts/{id}:
  *  get:
- *    tags: 
+ *    tags:
  *      - Posts
  *    summary: tìm bài viết theo id
  *    parameters:
@@ -76,11 +68,7 @@ route.get(
  *      200:
  *        description: thành công
  */
-route.get(
-    "/:id",
-    validateParams.validationId,
-    postController.getPostById
-);
+route.get('/:id', validateParams.validationId, postController.getPostById);
 /**
  * @openapi
  * /v1/posts:
@@ -107,12 +95,7 @@ route.get(
  *        description: thành công
  */
 
-route.post(
-    "/",
-    authenticate,
-    validateParams.validateCreatePost,
-    postController.createPost
-); 
+route.post('/', authenticate, validateParams.validateCreatePost, postController.createPost);
 
 /**
  * @openapi
@@ -144,11 +127,11 @@ route.post(
  */
 
 route.patch(
-    "/:id",
-    authenticate,
-    authorizePostOwner,
-    validateParams.validateUpdatePost,
-    postController.patchPostById
+  '/:id',
+  authenticate,
+  authorizePostOwner,
+  validateParams.validateUpdatePost,
+  postController.patchPostById,
 );
 
 /**
@@ -169,11 +152,11 @@ route.patch(
  */
 
 route.delete(
-    "/:id",
-    authenticate,
-    authorizePostOwnerOrAdmin,
-    validateParams.validationId,
-    postController.deletePostById
+  '/:id',
+  authenticate,
+  authorizePostOwnerOrAdmin,
+  validateParams.validationId,
+  postController.deletePostById,
 );
 
 export default route;

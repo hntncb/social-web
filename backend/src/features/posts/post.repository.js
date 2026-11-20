@@ -1,88 +1,91 @@
-import pool from "../../database/pool.js"
+import pool from '../../database/pool.js';
 
 export const findPostById = async (id) => {
-    const result = await pool.query(
-        `SELECT p.*, u.username, pl.url
+  const result = await pool.query(
+    `SELECT p.*, u.username, pl.url
         FROM posts p
         JOIN users u ON u.id = p.author_id
         LEFT JOIN post_links pl ON pl.post_id = p.id
         WHERE p.deleted_at IS NULL
         AND p.id = $1
         `,
-        [id]
-    );
-    return result.rows[0];
+    [id],
+  );
+  return result.rows[0];
 };
 
-export const findPostsWithOffset = async (limit,offset) => {
-    const result = await pool.query(
-        `SELECT p.*, u.username, COUNT(*) OVER() AS count
+export const findPostsWithOffset = async (limit, offset) => {
+  const result = await pool.query(
+    `SELECT p.*, u.username, COUNT(*) OVER() AS count
         FROM posts p
         INNER JOIN users u ON p.author_id = u.id
         WHERE p.deleted_at IS NULL
         ORDER BY p.created_at DESC, p.id DESC
         LIMIT $1 OFFSET $2
         `,
-        [limit,offset]
-    );
-    return result.rows;
-}
+    [limit, offset],
+  );
+  return result.rows;
+};
 
 export const findPostsWithCursor = async (post_id, limit) => {
-
-    const result = await pool.query(
-        `SELECT * FROM posts
+  const result = await pool.query(
+    `SELECT * FROM posts
         WHERE deleted_at IS NULL
             AND id > $1 
         ORDER BY created_at ASC, id ASC LIMIT $2
         `,
-        [post_id, limit]
-    );
-    return result.rows;
-}
+    [post_id, limit],
+  );
+  return result.rows;
+};
 
 export const createPost = async (title, content, author_id) => {
-    const result = await pool.query(
-        `INSERT INTO posts 
+  const result = await pool.query(
+    `INSERT INTO posts 
         (title, content, author_id)
         VALUES($1,$2,$3)
         RETURNING *
         `,
-        [title,content,author_id]
-    );
-    return result.rows[0] ?? null;
-}
+    [title, content, author_id],
+  );
+  return result.rows[0] ?? null;
+};
 
 export const createPostWithUrl = async (title, content, author_id, url) => {
-    const client = await pool.connect();
-    
-    try {
-        
-        await client.query("BEGIN");
+  const client = await pool.connect();
 
-        const postResult = await client.query("INSERT INTO posts (title, content, author_id) VALUES ($1,$2,$3) RETURNING *",[title, content, author_id]);
+  try {
+    await client.query('BEGIN');
 
-        const post = postResult.rows[0];
+    const postResult = await client.query(
+      'INSERT INTO posts (title, content, author_id) VALUES ($1,$2,$3) RETURNING *',
+      [title, content, author_id],
+    );
 
-        await client.query("INSERT INTO post_links (post_id, url) VALUES ($1,$2) RETURNING  *",[post.id, url]);
+    const post = postResult.rows[0];
 
-        await client.query("COMMIT");
-        
-        const {...postWithoutId} = post;
+    await client.query('INSERT INTO post_links (post_id, url) VALUES ($1,$2) RETURNING  *', [
+      post.id,
+      url,
+    ]);
 
-        return {...postWithoutId, url};
+    await client.query('COMMIT');
 
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    };
+    const { ...postWithoutId } = post;
+
+    return { ...postWithoutId, url };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 export const updatePostById = async (client, id, data) => {
-    const { title, content } = data;
-    const sql = `UPDATE posts
+  const { title, content } = data;
+  const sql = `UPDATE posts
         SET 
             title = COALESCE($2, title), 
             content = COALESCE($3, content),
@@ -93,36 +96,36 @@ export const updatePostById = async (client, id, data) => {
         RETURNING *
         `;
 
-    const result = await client.query(sql, [id, title, content]);
-    return result.rows[0] ?? null;
+  const result = await client.query(sql, [id, title, content]);
+  return result.rows[0] ?? null;
 };
 
 export const upsertPostLink = async (client, id, data) => {
-    let index = 1;
-    let sqlString = "";
-    let post_id = id;
-    const values = [];
-    for (const [key, value] of Object.entries(data)){
-        if(index >= 2){
-            sqlString += `,`
-        }
-        sqlString += `${key}`;
-        values.push(value);
-        index++;
-    };
-    
-    values.push(post_id);
-    //console.log(values);
-    const sql = `
+  let index = 1;
+  let sqlString = '';
+  let post_id = id;
+  const values = [];
+  for (const [key, value] of Object.entries(data)) {
+    if (index >= 2) {
+      sqlString += `,`;
+    }
+    sqlString += `${key}`;
+    values.push(value);
+    index++;
+  }
+
+  values.push(post_id);
+  //console.log(values);
+  const sql = `
         INSERT INTO post_links (${sqlString}, post_id)
         VALUES ($1, $2)
         ON CONFLICT (post_id)
         DO UPDATE SET url = EXCLUDED.url, updated_at = NOW()
         RETURNING *
     `;
-    const result = await client.query(sql, values);
-    return result.rows[0] ?? null;
-}
+  const result = await client.query(sql, values);
+  return result.rows[0] ?? null;
+};
 
 /*export const updatePostWithURLById = async (id, data) => {
     const client = await pool.connect();
@@ -181,26 +184,26 @@ export const upsertPostLink = async (client, id, data) => {
 };*/
 
 export const deletePostById = async (id) => {
-    const result = await pool.query(
-        `UPDATE posts
+  const result = await pool.query(
+    `UPDATE posts
         SET deleted_at = NOW()
         WHERE id = $1
         RETURNING deleted_at
         `,
-        [id]
-    );
-    return result.rows[0] ?? null;
-}
+    [id],
+  );
+  return result.rows[0] ?? null;
+};
 
-const postRepository =  {
-    findPostById,
-    findPostsWithOffset,
-    findPostsWithCursor,
-    createPost,
-    createPostWithUrl,
-    updatePostById,
-    upsertPostLink,
-    deletePostById,
+const postRepository = {
+  findPostById,
+  findPostsWithOffset,
+  findPostsWithCursor,
+  createPost,
+  createPostWithUrl,
+  updatePostById,
+  upsertPostLink,
+  deletePostById,
 };
 
 export default postRepository;

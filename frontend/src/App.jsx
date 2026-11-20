@@ -8,7 +8,7 @@ import { SelfInfomationPage } from './pages/SelfInformationPage';
 
 function App() {
   return (
-    <Routes >
+    <Routes>
       <Route path="/" element={<LoginPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -18,7 +18,7 @@ function App() {
         <Route path="/me" element={<SelfInfomationPage />} />
       </Route>
     </Routes>
-    );
+  );
 }
 
 export default App;

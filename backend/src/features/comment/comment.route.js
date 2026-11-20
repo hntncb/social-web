@@ -1,23 +1,26 @@
-import { Router } from "express";
-import { authorizeCommentOwner, authorizeCommentOwnerOrAdmin } from "../comment/comment.authorization.js";
-import { authenticate } from "../../middleware/auth.middleware.js";
-import validateParams from "../../middleware/validateParams.middleware.js";
-import commentController from "./comment.controller.js";
+import { Router } from 'express';
+import {
+  authorizeCommentOwner,
+  authorizeCommentOwnerOrAdmin,
+} from '../comment/comment.authorization.js';
+import { authenticate } from '../../middleware/auth.middleware.js';
+import validateParams from '../../middleware/validateParams.middleware.js';
+import commentController from './comment.controller.js';
 
 const route = Router();
 
 // Middleware phụ trợ kiểm tra tham số dạng số nguyên dương theo tên param
 const validateParamId = (paramName) => (req, res, next) => {
-    const rawValue = req.params[paramName];
-    const parsedValue = Number(rawValue);
-    if (!rawValue || isNaN(parsedValue) || parsedValue < 0 || !Number.isInteger(parsedValue)) {
-        return res.status(400).json({
-            success: false,
-            message: `${paramName} khong hop le hoac bi thieu`
-        });
-    }
-    req.params[paramName] = parsedValue;
-    next();
+  const rawValue = req.params[paramName];
+  const parsedValue = Number(rawValue);
+  if (!rawValue || isNaN(parsedValue) || parsedValue < 0 || !Number.isInteger(parsedValue)) {
+    return res.status(400).json({
+      success: false,
+      message: `${paramName} khong hop le hoac bi thieu`,
+    });
+  }
+  req.params[paramName] = parsedValue;
+  next();
 };
 
 /**
@@ -31,7 +34,7 @@ const validateParamId = (paramName) => (req, res, next) => {
  *       200:
  *         description: Thành công
  */
-route.get("/", commentController.getAll);
+route.get('/', commentController.getAll);
 
 /**
  * @openapi
@@ -50,11 +53,7 @@ route.get("/", commentController.getAll);
  *       200:
  *         description: Thành công
  */
-route.get(
-    "/post/:post_id",
-    validateParamId('post_id'),
-    commentController.getByPostId
-);
+route.get('/post/:post_id', validateParamId('post_id'), commentController.getByPostId);
 
 /**
  * @openapi
@@ -73,11 +72,7 @@ route.get(
  *       200:
  *         description: Thành công
  */
-route.get(
-    "/reply/:parent_id",
-    validateParamId('parent_id'),
-    commentController.getReply
-);
+route.get('/reply/:parent_id', validateParamId('parent_id'), commentController.getReply);
 
 /**
  * @openapi
@@ -104,11 +99,7 @@ route.get(
  *       201:
  *         description: Thành công
  */
-route.post(
-    "/",
-    authenticate,
-    commentController.create
-);
+route.post('/', authenticate, commentController.create);
 
 /**
  * @openapi
@@ -138,11 +129,11 @@ route.post(
  *         description: Thành công
  */
 route.patch(
-    "/:id",
-    authenticate,
-    authorizeCommentOwner,
-    validateParams.validationId,
-    commentController.update
+  '/:id',
+  authenticate,
+  authorizeCommentOwner,
+  validateParams.validationId,
+  commentController.update,
 );
 
 /**
@@ -165,11 +156,11 @@ route.patch(
  *         description: Thành công
  */
 route.delete(
-    "/:id",
-    authenticate,
-    authorizeCommentOwnerOrAdmin,
-    validateParams.validationId,
-    commentController.deleteById
+  '/:id',
+  authenticate,
+  authorizeCommentOwnerOrAdmin,
+  validateParams.validationId,
+  commentController.deleteById,
 );
 
 export default route;

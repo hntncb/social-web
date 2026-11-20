@@ -1,12 +1,11 @@
-export const validateUser = (req,res,next)=>{
-    const {username, password} = req.body;
-    
-    if(!username || !password ) {
-        return res.status(400).json({
-            message: "hay nhap username va password",
-        });
-    }
+export const validateUser = (req, res, next) => {
+  const { username, password } = req.body;
 
-    next();
+  if (!username || !password) {
+    return res.status(400).json({
+      message: 'hay nhap username va password',
+    });
+  }
+
+  next();
 };
-
