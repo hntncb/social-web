@@ -1,6 +1,6 @@
 # <Social Web>
 
-Ứng dụng web đăng bài và bình luận (full-stack) với xác thực JWT, phân quyền theo vai trò, bình luận lồng nhau, được đóng gói bằng Docker và đã triển khai thực tế. Dự án được xây dựng để học tập và làm portfolio cho vị trí Fresher/Junior.
+Ứng dụng web đăng bài và bình luận (full-stack) với xác thực JWT, phân quyền theo vai trò, bình luận lồng nhau, được đóng gói bằng Docker và đã triển khai thực tế.
 
 ## Demo
 
