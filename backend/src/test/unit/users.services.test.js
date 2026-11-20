@@ -32,14 +32,19 @@ describe("test userservices", () => {
     });
 
     describe("test getAll", () => {
+
+
         it("should return all users", async () => {
             mock.method(userRepository, "findAll", async () => {
                 return mockUser;
             });
 
+            const expected = mockUser.map(({password_hash,...rest})=>rest)
+
             const result = await userServices.getAll();
 
-            assert.deepStrictEqual(result, mockUser);
+            assert.deepStrictEqual(result, expected);
+            assert.ok(result.every(user => !("password_hash" in user)));
         });
     });
 

@@ -41,7 +41,7 @@ export const findByUsernamewithPassword = async (username) => {
 export const findAll = async () => {
     const result = await pool.query(
         `
-        SELECT id, email, username,password_hash, created_at, deleted_at
+        SELECT *
         FROM users
         ORDER BY created_at DESC 
         `

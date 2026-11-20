@@ -5,11 +5,14 @@ import bcrypt from 'bcrypt';
 const SALT_ROUND = 10;
 
 export const getAll = async () => {
-    return userRepository.findAll();
+    const response = await userRepository.findAll()
+    const result = response.map(({password_hash, ...usersWithoutPassword}) => usersWithoutPassword);
+    
+    return result;
 };
 
 export const getById = async (id) => {
-    const cacheKey = `user:${id}`;
+    //const cacheKey = `user:${id}`;
     //const cachedUser = await redisClient.get(cacheKey);
     const user = await userRepository.findById(id);
 
@@ -18,8 +21,6 @@ export const getById = async (id) => {
 
         return JSON.parse(cachedUser)
     }
-
-    console.log("GET USER FROM POSTGRESQL");*/
 
     if (!user) {
         const error = new Error("khong tim thay user");
