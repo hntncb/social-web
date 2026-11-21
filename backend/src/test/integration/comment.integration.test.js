@@ -146,6 +146,8 @@ describe('comment integration test', () => {
         .set('Authorization', `Bearer ${another_user_token}`)
         .send({ content: 'Updated content' })
         .expect(403);
+
+      assert.strictEqual(response.body, true);
     });
   });
 

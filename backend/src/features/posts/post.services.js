@@ -46,7 +46,6 @@ export const getPostById = async (id) => {
 
 export const createPost = async ({ title, content, author_id, url }) => {
   if (!url || !url.trim()) {
-    url = null;
     return postRepository.createPost(title, content, author_id);
   }
 
@@ -118,7 +117,6 @@ const postServices = {
   getPostsWithOffset,
   getPostById,
   getPostWithCursor,
-  getPostsWithOffset,
   createPost,
   patchPostById,
   deletePostById,

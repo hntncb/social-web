@@ -33,7 +33,7 @@ export const patchById = async (req, res) => {
 };
 
 export const deleteById = async (req, res) => {
-  const user = await userService.deleteById(req.params.id);
+  await userService.deleteById(req.params.id);
   return res.status(200).json({
     message: 'xoa thanh cong',
   });

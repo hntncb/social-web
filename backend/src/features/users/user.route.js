@@ -3,7 +3,6 @@ import * as userController from './user.controller.js';
 import { authenticate } from '../../middleware/auth.middleware.js';
 import {
   authorizeOwnerOrAdmin,
-  authorizeOwner,
   authorizeRoles,
 } from '../../middleware/authorization.middleware.js';
 

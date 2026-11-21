@@ -26,8 +26,14 @@ export const authenticate = (req, res, next) => {
 
     next();
   } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({
+        message: 'token da het han',
+      });
+    }
+
     return res.status(401).json({
-      message: 'token khong hop le hoac da het han',
+      message: 'token khong hop le',
     });
   }
 };

@@ -2,7 +2,7 @@ import commentRepository from './comment.repository.js';
 
 export const getAll = async () => {
   const comment = await commentRepository.findAll();
-  return { comment } || [];
+  return { comment };
 };
 
 export const getByPostId = async (post_id) => {

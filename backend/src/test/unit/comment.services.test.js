@@ -62,7 +62,7 @@ describe('test comment services', () => {
       const postId = 999;
       mock.method(commentRepository, 'findByPostId', async () => null);
 
-      const result = await commentServices.getByPostId(999);
+      const result = await commentServices.getByPostId(postId);
       assert.deepStrictEqual(result, []);
     });
   });

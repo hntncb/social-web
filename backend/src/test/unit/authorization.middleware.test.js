@@ -3,11 +3,11 @@ import assert from 'node:assert';
 import authorizationMiddleware from '../../middleware/authorization.middleware.js';
 
 describe('test autorization', () => {
-  let req;
+  let _req;
   let res;
   let next;
   beforeEach(() => {
-    req = { headers: {} };
+    _req = { headers: {} };
     res = {
       statusCode: null,
       body: null,

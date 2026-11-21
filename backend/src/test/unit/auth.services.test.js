@@ -79,7 +79,7 @@ describe('test authServices', () => {
 
       mock.method(jwtGenToken, 'generateAccessToken', () => expectedToken);
 
-      const result = await assert.rejects(
+      await assert.rejects(
         async () => {
           await authServices.login(user);
         },
@@ -110,7 +110,7 @@ describe('test authServices', () => {
 
       mock.method(jwtGenToken, 'generateAccessToken', () => expectedToken);
 
-      const result = await assert.rejects(
+      await assert.rejects(
         async () => {
           await authServices.login(user);
         },
@@ -140,7 +140,7 @@ describe('test authServices', () => {
 
       mock.method(bcrypt, 'hash', async () => password_hash);
 
-      const mockCreateUser = mock.method(userRepository, 'createUser', async () => {
+      mock.method(userRepository, 'createUser', async () => {
         return mockUser[1];
       });
 
@@ -164,11 +164,11 @@ describe('test authServices', () => {
 
       mock.method(bcrypt, 'hash', async () => password_hash);
 
-      const mockCreateUser = mock.method(userRepository, 'createUser', async () => {
+      mock.method(userRepository, 'createUser', async () => {
         return mockUser[1];
       });
 
-      const result = await assert.rejects(
+      await assert.rejects(
         async () => {
           await authServices.create(user);
         },

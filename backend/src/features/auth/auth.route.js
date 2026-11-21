@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as authController from './auth.controller.js';
 import { validateUser } from './auth.validation.js';
-
+import validateParams from '../../middleware/validateParams.middleware.js';
 const router = Router();
 
 /**
@@ -34,7 +34,13 @@ const router = Router();
  *
  */
 
-router.post('/login', validateUser, authController.login);
+router.post(
+  '/login',
+  validateUser,
+  validateParams.validationUsername,
+  validateParams.validationPassword,
+  authController.login,
+);
 /**
  * @openapi
  * /v1/auth/register:
@@ -59,6 +65,12 @@ router.post('/login', validateUser, authController.login);
  *        description: thành công
  */
 
-router.post('/register', validateUser, authController.create);
+router.post(
+  '/register',
+  validateUser,
+  validateParams.validationUsername,
+  validateParams.validationPassword,
+  authController.create,
+);
 
 export default router;

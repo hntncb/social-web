@@ -10,37 +10,37 @@ import postRepository from '../../features/posts/post.repository.js';
 describe('post integration test', () => {
   let user_token;
   let another_user_token;
-  let admin_token;
-  let author_id;
 
   beforeEach(async () => {
     await pool.query(`TRUNCATE TABLE users, posts, post_links RESTART IDENTITY CASCADE`);
 
-    const user = await pool.query(
+    const usersResult = await pool.query(
       `
-            INSERT INTO users (email, username, password_hash)
-            VALUES ('myemail@gmail.com','user1','$2a$10$IpRf2gAhE/ELPAd5uIAcL.MeqGptjxblwt1b8ffGTAa80W.sDeRTq')
-            RETURNING *
-            `,
+      INSERT INTO users (email, username, password_hash)
+      VALUES
+        ('user1@gmail.com', 'user1', '$2a$10$IpRf2gAhE/ELPAd5uIAcL.MeqGptjxblwt1b8ffGTAa80W.sDeRTq'),
+        ('user2@gmail.com', 'user2', '$2a$10$IpRf2gAhE/ELPAd5uIAcL.MeqGptjxblwt1b8ffGTAa80W.sDeRTq'),
+        ('admin1@gmail.com', 'admin1', '$2a$10$IpRf2gAhE/ELPAd5uIAcL.MeqGptjxblwt1b8ffGTAa80W.sDeRTq')
+      RETURNING *
+      `,
     );
 
-    author_id = user.rows[0].id;
-    // tạo 20 posts của user dummy
-    const rows = 20;
+    const [user1, user2, admin1] = usersResult.rows;
+    const users = [user1, user2, admin1];
 
+    const rows = 20;
     for (let i = 1; i <= rows; i++) {
+      const owner = users[(i - 1) % users.length];
       const createdAt = new Date(Date.now() + i * 1000);
       await pool.query(
-        `INSERT INTO posts 
-                (title, content, author_id, created_at)
-                VALUES($1,$2,$3,$4)`,
-        [`post ${i}`, 'bai viet test', author_id, createdAt],
+        `INSERT INTO posts (title, content, author_id, created_at)
+         VALUES ($1, $2, $3, $4)`,
+        [`post ${i}`, 'bai viet test', owner.id, createdAt],
       );
     }
 
-    user_token = generateAccessToken({ id: 1, role: 'user' });
-    admin_token = generateAccessToken({ id: 2, role: 'admin' });
-    another_user_token = generateAccessToken({ id: 3, role: 'user' });
+    user_token = generateAccessToken({ id: user1.id, role: 'user' });
+    another_user_token = generateAccessToken({ id: user2.id, role: 'user' });
   });
 
   afterEach(async () => {
@@ -164,6 +164,8 @@ describe('post integration test', () => {
       const offset = 0;
 
       const result = await request(app).get('/v1/posts/pages').query({ limit, offset }).expect(200);
+
+      assert.strictEqual(result.body.success, true);
     });
 
     // truyền tham số rỗng
@@ -193,6 +195,7 @@ describe('post integration test', () => {
       const offset = '9999999999';
 
       const result = await request(app).get('/v1/posts/pages').query({ limit, offset }).expect(200);
+      assert.strictEqual(result.body.success, true);
     });
 
     // tham số âm
@@ -343,7 +346,7 @@ describe('post integration test', () => {
       const content = 'aaaaaa';
       const url = 'http://google@gmail.com';
 
-      const result = await request(app)
+      await request(app)
         .patch(`/v1/posts/${post_id}`)
         .set('Authorization', `Bearer ${user_token}`)
         .send({ title, content, url })
@@ -357,7 +360,7 @@ describe('post integration test', () => {
       const content = 'aaaaaa';
       const url = 'http://google@gmail.com';
 
-      const result = await request(app)
+      await request(app)
         .patch(`/v1/posts/${post_id}`)
         .set('Authorization', `Bearer ${another_user_token}`)
         .send({ title, content, url })
@@ -371,10 +374,7 @@ describe('post integration test', () => {
       const content = 'aaaaaa';
       const url = 'http://google@gmail.com';
 
-      const result = await request(app)
-        .patch(`/v1/posts/${post_id}`)
-        .send({ title, content, url })
-        .expect(401);
+      await request(app).patch(`/v1/posts/${post_id}`).send({ title, content, url }).expect(401);
     });
   });
 
@@ -393,7 +393,7 @@ describe('post integration test', () => {
     // không truyền id
     it('should return status 400 when invalid id', async () => {
       const id = {};
-      const result = await request(app)
+      await request(app)
         .delete(`/v1/posts/${id}`)
         .set('Authorization', `Bearer ${user_token}`)
         .expect(404);
@@ -402,7 +402,7 @@ describe('post integration test', () => {
     // truyền id bài viết không tồn tại
     it('should return status 404 when post_id not found', async () => {
       const id = 999999999;
-      const result = await request(app)
+      await request(app)
         .delete(`/v1/posts/${id}`)
         .set('Authorization', `Bearer ${user_token}`)
         .expect(404);
@@ -411,7 +411,7 @@ describe('post integration test', () => {
     // không phải chủ bài
     it('should return status 403 when non-owner user', async () => {
       const id = 1;
-      const result = await request(app)
+      await request(app)
         .delete(`/v1/posts/${id}`)
         .set('Authorization', `Bearer ${another_user_token}`)
         .expect(403);

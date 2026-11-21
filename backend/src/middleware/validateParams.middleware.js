@@ -1,13 +1,29 @@
 const validationId = (req, res, next) => {
-  let location = 'body';
-  if (req.params && req.params.id !== undefined) {
-    req.params.id = Number(req.params.id);
-    location = 'params';
+  const rawId = req.params?.id ?? req.body?.id;
+
+  if (rawId === undefined || rawId === null || String(rawId).trim() === '') {
+    return res.status(400).json({
+      success: false,
+      message: 'id khong duoc de trong',
+    });
   }
 
-  const middlewareFn = validatePositiveIntegers([{ location: location, name: 'id' }]);
+  const id = Number(rawId);
 
-  middlewareFn(req, res, next);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({
+      success: false,
+      message: 'id khong hop le',
+    });
+  }
+
+  if (req.params?.id !== undefined) {
+    req.params.id = id;
+  } else if (req.body) {
+    req.body.id = id;
+  }
+
+  next();
 };
 
 const validationUsername = (req, res, next) => {
@@ -57,17 +73,12 @@ const validationPassword = (req, res, next) => {
   next();
 };
 
-const validatePositiveIntegers = (fields) => {
+const validateQueryIntegers = (fields) => {
   return (req, res, next) => {
-    for (const { location, name } of fields) {
-      const rawValue = req[location]?.[name];
-      if (
-        !rawValue ||
-        rawValue === undefined ||
-        rawValue === null ||
-        isNaN(rawValue) ||
-        String(rawValue).trim() == ''
-      ) {
+    for (const name of fields) {
+      const rawValue = req.query?.[name];
+
+      if (rawValue === undefined || rawValue === null || String(rawValue).trim() === '') {
         return res.status(400).json({
           success: false,
           message: `${name} khong duoc de trong`,
@@ -75,28 +86,25 @@ const validatePositiveIntegers = (fields) => {
       }
 
       const parsedValue = Number(rawValue);
+      const minValue = name === 'offset' ? 0 : 1;
 
-      if (parsedValue < 0 || isNaN(parsedValue) || !Number.isInteger(parsedValue)) {
+      if (!Number.isInteger(parsedValue) || parsedValue < minValue) {
         return res.status(400).json({
           success: false,
           message: `${name} khong hop le hoac bi thieu`,
         });
       }
-      req[location][name] = parsedValue;
+
+      req.query[name] = parsedValue;
     }
+
     next();
   };
 };
 
-const validateCursorParams = validatePositiveIntegers([
-  { location: 'query', name: 'post_id' },
-  { location: 'query', name: 'limit' },
-]);
+const validateCursorParams = validateQueryIntegers(['post_id', 'limit']);
 
-const validateOffsetParams = validatePositiveIntegers([
-  { location: 'query', name: 'limit' },
-  { location: 'query', name: 'offset' },
-]);
+const validateOffsetParams = validateQueryIntegers(['limit', 'offset']);
 
 const validatePostBody = (body) => {
   const title = body?.title ? String(body.title).trim() : '';
@@ -114,7 +122,7 @@ const validatePostBody = (body) => {
 };
 
 export const validateCreateComment = (req, res, next) => {
-  const { user_id, post_id, parent_id, content, urlError } = validatePostBody(req.body);
+  const { _user_id, _post_id, _parent_id, content, urlError } = validatePostBody(req.body);
 
   if (!content) {
     return res.status(400).json({
@@ -136,19 +144,15 @@ export const validateUpdateComment = (req, res, next) => {
   if (!content) {
     return res.status(400).json({
       success: false,
-      message: 'phai co it content',
+      message: 'phai co noi dung',
     });
-  }
-
-  if (urlError) {
-    return res.status(400).json({ success: false, message: urlError });
   }
 
   next();
 };
 
 export const validateCreatePost = (req, res, next) => {
-  const { title, content, url, urlError } = validatePostBody(req.body);
+  const { title, content, _url, urlError } = validatePostBody(req.body);
 
   if (!title || !content) {
     return res.status(400).json({
@@ -190,7 +194,7 @@ const validateUserParams = (req, res, next) => {
   if (!hasEmail && !hasUsername && !hasPassword) {
     return res.status(400).json({
       success: false,
-      message: 'phai co 1 trong: email, username, password',
+      message: 'phai co it nhat 1 trong: email, username, password',
     });
   }
 

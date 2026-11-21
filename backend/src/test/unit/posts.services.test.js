@@ -403,6 +403,8 @@ describe('test post service', () => {
 
       const result = await postServices.patchPostById(id, data);
 
+      assert.strictEqual(clientMock.mock.callCount(), 1);
+
       assert.strictEqual(findRepoPost.mock.calls[0].arguments[0], id);
 
       assert.deepStrictEqual(mockRepoUpdate.mock.calls[0].arguments[2], postData);
@@ -445,7 +447,7 @@ describe('test post service', () => {
       );
 
       const result = await postServices.patchPostById(id, data);
-
+      assert.strictEqual(clientMock.mock.callCount(), 1);
       assert.strictEqual(findRepoPost.mock.calls[0].arguments[0], id);
 
       assert.deepStrictEqual(mockRepoUpdate.mock.calls[0].arguments[2], postData);
@@ -494,7 +496,7 @@ describe('test post service', () => {
       const mockRepoUpsert = mock.method(
         postRepository,
         'upsertPostLink',
-        async (client, postId, lData) => {
+        async (_client, _postId, _lData) => {
           throw error;
         },
       );
@@ -510,7 +512,7 @@ describe('test post service', () => {
       );
 
       assert.strictEqual(findRepoPost.mock.calls[0].arguments[0], id);
-
+      assert.strictEqual(clientMock.mock.callCount(), 1);
       assert.deepStrictEqual(mockRepoUpdate.mock.calls[0].arguments[2], postData);
 
       assert.deepStrictEqual(mockRepoUpsert.mock.calls[0].arguments[2], postLinkData);
@@ -524,16 +526,7 @@ describe('test post service', () => {
         url: 'https://helloworl.com',
       };
 
-      const postData = {
-        title: 'example title',
-        content: 'example content',
-      };
-
-      const postLinkData = {
-        url: 'https://helloworl.com',
-      };
-
-      const findRepoPost = mock.method(postRepository, 'findPostById', async (postId) => {
+      const findRepoPost = mock.method(postRepository, 'findPostById', async () => {
         return null;
       });
 
@@ -557,7 +550,7 @@ describe('test post service', () => {
     it('should return user deleted timestamp', async () => {
       const postId = 1;
       const deleted_at = '2024-08-13T03:21:45.123Z';
-      const deleteRepomock = mock.method(postRepository, 'deletePostById', async (postId) => {
+      const deleteRepomock = mock.method(postRepository, 'deletePostById', async () => {
         return { deleted_at };
       });
 
@@ -573,7 +566,7 @@ describe('test post service', () => {
     it('should return []', async () => {
       const postId = '';
       const deleted_at = '2024-08-13T03:21:45.123Z';
-      const deleteRepomock = mock.method(postRepository, 'deletePostById', async (postId) => {
+      const deleteRepomock = mock.method(postRepository, 'deletePostById', async () => {
         return [];
       });
 
@@ -582,14 +575,14 @@ describe('test post service', () => {
       assert.equal(deleteRepomock.mock.calls[0].arguments, postId);
 
       assert.equal(deleteRepomock.mock.callCount(), 1);
-
+      assert.equal(result.deleted_at, deleted_at);
       assert.deepStrictEqual(result, []);
     });
 
     it('should return error', async () => {
       const postId = '';
       const error = new Error('database error');
-      const deleteRepomock = mock.method(postRepository, 'deletePostById', async (postId) => {
+      const deleteRepomock = mock.method(postRepository, 'deletePostById', async () => {
         throw error;
       });
 
@@ -610,7 +603,7 @@ describe('test post service', () => {
 
     it('should return 404', async () => {
       const postId = '';
-      const deleteRepomock = mock.method(postRepository, 'deletePostById', async (postId) => {
+      const deleteRepomock = mock.method(postRepository, 'deletePostById', async () => {
         return null;
       });
 
