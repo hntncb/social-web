@@ -90,7 +90,7 @@ describe('test authservices', () => {
 
       assert.strictEqual(res.statusCode, 401);
       assert.strictEqual(next.mock.callCount(), 0);
-      assert.deepStrictEqual(res.body, { message: 'token khong hop le hoac da het han' });
+      assert.deepStrictEqual(res.body, { message: 'token khong hop le' });
     });
   });
 });

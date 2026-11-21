@@ -565,17 +565,15 @@ describe('test post service', () => {
 
     it('should return []', async () => {
       const postId = '';
-      const deleted_at = '2024-08-13T03:21:45.123Z';
       const deleteRepomock = mock.method(postRepository, 'deletePostById', async () => {
         return [];
       });
 
       const result = await postServices.deletePostById(postId);
-
+      console.log(result);
       assert.equal(deleteRepomock.mock.calls[0].arguments, postId);
 
       assert.equal(deleteRepomock.mock.callCount(), 1);
-      assert.equal(result.deleted_at, deleted_at);
       assert.deepStrictEqual(result, []);
     });
 
